@@ -1,10 +1,9 @@
 import pandas as pd
 
 def train_spam_filter(csv_path):
-    """
-    Trains a Find-S algorithm on the provided CSV data.
-    """
-    # Load dataset
+    # Function to train the model using Find-S algorithm
+    
+    # Read the dataset
     df = pd.read_csv(csv_path)
 
     # The last column is the target label (Spam/Not Spam)
