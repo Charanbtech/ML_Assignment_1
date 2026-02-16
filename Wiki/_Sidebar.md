@@ -1,0 +1,4 @@
+- [Home](Home)
+- [Concept Learning — Spam Classification](Concept-Learning-Spam-Classification)
+- [Decision Tree — Loan Default Prediction](Decision-Tree-Loan-Prediction)
+- [ID3 Decision Tree — Buy Computer](ID3-Buy-Computer-Analysis)

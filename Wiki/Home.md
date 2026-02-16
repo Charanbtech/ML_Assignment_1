@@ -4,9 +4,9 @@ Welcome to the documentation for Machine Learning Assignment 1. This repository 
 
 ## Navigate to Sections
 
-- 👉 [Concept Learning — Spam Classification](Concept-Learning-Spam-Classification.md)
-- 👉 [Decision Tree — Loan Default Prediction](Decision-Tree-Loan-Prediction.md)
-- 👉 [ID3 Decision Tree — Buy Computer](ID3-Buy-Computer-Analysis.md)
+- 👉 [Concept Learning — Spam Classification](Concept-Learning-Spam-Classification)
+- 👉 [Decision Tree — Loan Default Prediction](Decision-Tree-Loan-Prediction)
+- 👉 [ID3 Decision Tree — Buy Computer](ID3-Buy-Computer-Analysis)
 
 ## 🔗 About
 
