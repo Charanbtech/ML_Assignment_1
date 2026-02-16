@@ -1,28 +1,45 @@
 from flask import Flask, render_template, request
-import pandas as pd
-from finds import id3, predict
+from id3_algorithm import build_id3_model, predict_purchase
 
 app = Flask(__name__)
 
-data = pd.read_csv("buy_computer.csv")
-attributes = ["Age", "Income", "Student", "CreditRating"]
+# Build model on startup
+csv_file = "buy_computer.csv"
+decision_tree = build_id3_model(csv_file)
 
-tree = id3(data, attributes)
-
-@app.route("/", methods=["GET","POST"])
-def index():
-    result = None
+@app.route("/", methods=["GET", "POST"])
+def sales_prediction():
+    prediction = None
+    
+    # Defaults
+    user_input = {
+        "age": "",
+        "income": "",
+        "student": "",
+        "credit": ""
+    }
 
     if request.method == "POST":
-        sample = {
-            "Age": request.form["age"],
-            "Income": request.form["income"],
-            "Student": request.form["student"],
-            "CreditRating": request.form["credit"]
+        user_input["age"] = request.form.get("age")
+        user_input["income"] = request.form.get("income")
+        user_input["student"] = request.form.get("student")
+        user_input["credit"] = request.form.get("credit")
+        
+        # Map form fields to internal names expected by the model
+        query_sample = {
+            "age": user_input["age"],
+            "income": user_input["income"],
+            "student": user_input["student"],
+            "credit_rating": user_input["credit"]
         }
-        result = predict(tree, sample)
+        
+        prediction = predict_purchase(query_sample)
 
-    return render_template("index.html", result=result)
+    return render_template(
+        "index.html",
+        result=prediction,
+        **user_input
+    )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5003)

@@ -1,34 +1,49 @@
 from flask import Flask, render_template, request
-from finds import train_finds, predict
+from concept_learning import train_spam_filter, classify_email
 
 app = Flask(__name__)
 
-# Train model
-hypothesis, attributes = train_finds("emails.csv")
+# Train the model once at startup
+dataset_path = "emails.csv"
+learned_hypothesis, feature_list = train_spam_filter(dataset_path)
 
 @app.route("/", methods=["GET", "POST"])
-def index():
-    result = None
+def home():
+    prediction_result = None
+    
+    # Default values for form persistence
+    form_data = {
+        "promo": "",
+        "links": "",
+        "sender": "",
+        "caps": ""
+    }
 
     if request.method == "POST":
-        promo = request.form["promo"]
-        links = request.form["links"]
-        sender = request.form["sender"]
-        caps = request.form["caps"]
+        # Extract data from form
+        form_data["promo"] = request.form.get("promo")
+        form_data["links"] = request.form.get("links")
+        form_data["sender"] = request.form.get("sender")
+        form_data["caps"] = request.form.get("caps")
 
-        input_data = [promo, links, sender, caps]
+        # Prepare input vector
+        email_features = [
+            form_data["promo"],
+            form_data["links"],
+            form_data["sender"],
+            form_data["caps"]
+        ]
 
-        result = predict(hypothesis, attributes, input_data)
+        # Make prediction
+        prediction_result = classify_email(learned_hypothesis, feature_list, email_features)
 
     return render_template(
-    "index.html",
-    result=result,
-    promo=promo if request.method=="POST" else "",
-    links=links if request.method=="POST" else "",
-    sender=sender if request.method=="POST" else "",
-    caps=caps if request.method=="POST" else ""
-)
+        "index.html",
+        result=prediction_result,
+        **form_data
+    )
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
+

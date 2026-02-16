@@ -1,46 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Spam Email Classifier</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detective</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-weight: 600;
+        }
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fafafa;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #5b4bc4;
+        }
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .result.spam {
+            background-color: #ffe0e0;
+            color: #d63031;
+            border: 1px solid #ff7675;
+        }
+        .result.not-spam {
+            background-color: #e0f9e0;
+            color: #00b894;
+            border: 1px solid #55efc4;
+        }
+    </style>
 </head>
 <body>
-<center>
-<h2>Spam Email Classifier</h2>
 
-<form method="POST">
+<div class="container">
+    <h2>📧 Spam Detective</h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Promotional Words (e.g., "Free", "Win"):</label>
+            <select name="promo">
+                <option value="" disabled {% if not promo %}selected{% endif %}>Select Option</option>
+                <option value="Yes" {% if promo=="Yes" %}selected{% endif %}>Yes</option>
+                <option value="No" {% if promo=="No" %}selected{% endif %}>No</option>
+            </select>
+        </div>
 
-Promotional Words:
-<select name="promo">
-<option value="Yes" {% if promo=="Yes" %}selected{% endif %}>Yes</option>
-<option value="No" {% if promo=="No" %}selected{% endif %}>No</option>
-</select>
+        <div class="form-group">
+            <label>Suspicious Links:</label>
+            <select name="links">
+                <option value="" disabled {% if not links %}selected{% endif %}>Select Option</option>
+                <option value="Yes" {% if links=="Yes" %}selected{% endif %}>Yes</option>
+                <option value="No" {% if links=="No" %}selected{% endif %}>No</option>
+            </select>
+        </div>
 
-Suspicious Links:
-<select name="links">
-<option value="Yes" {% if links=="Yes" %}selected{% endif %}>Yes</option>
-<option value="No" {% if links=="No" %}selected{% endif %}>No</option>
-</select>   
+        <div class="form-group">
+            <label>Known Sender:</label>
+            <select name="sender">
+                <option value="" disabled {% if not sender %}selected{% endif %}>Select Option</option>
+                <option value="Yes" {% if sender=="Yes" %}selected{% endif %}>Yes</option>
+                <option value="No" {% if sender=="No" %}selected{% endif %}>No</option>
+            </select>
+        </div>
 
+        <div class="form-group">
+            <label>All Uppercase Subject:</label>
+            <select name="caps">
+                <option value="" disabled {% if not caps %}selected{% endif %}>Select Option</option>
+                <option value="Yes" {% if caps=="Yes" %}selected{% endif %}>Yes</option>
+                <option value="No" {% if caps=="No" %}selected{% endif %}>No</option>
+            </select>
+        </div>
 
-Known Sender:
-<select name="sender">
-<option value="Yes" {% if sender=="Yes" %}selected{% endif %}>Yes</option>
-<option value="No" {% if sender=="No" %}selected{% endif %}>No</option>
-</select>
+        <button type="submit">Analyze Email</button>
+    </form>
 
-All Caps:
-<select name="caps">
-<option value="Yes" {% if caps=="Yes" %}selected{% endif %}>Yes</option>
-<option value="No" {% if caps=="No" %}selected{% endif %}>No</option>
-</select>
+    {% if result %}
+    <div class="result {% if result == 'Spam' %}spam{% else %}not-spam{% endif %}">
+        Analysis Result: {{ result }}
+    </div>
+    {% endif %}
+</div>
 
-<button type="submit">Predict</button>
-
-</form>
-
-{% if result %}
-<h3>Result: {{ result }}</h3>
-{% endif %}
-</center>
 </body>
 </html>

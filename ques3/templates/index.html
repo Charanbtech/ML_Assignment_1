@@ -1,47 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>Buy Computer Prediction</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Purchase Predictor</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .main-container {
+            background-color: #f8f9fa;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.5rem;
+        }
+
+        .form-row {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 1rem;
+        }
+
+        .btn-predict {
+            width: 100%;
+            padding: 1rem;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-predict:hover {
+            background-color: #d35400;
+        }
+
+        .result-display {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.25rem;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .buy-yes {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .buy-no {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>ID3 Decision Tree — Buy Computer</h2>
+    <div class="main-container">
+        <h2>💻 Sales Predictor</h2>
 
-<form method="POST">
+        <form method="POST">
+            <div class="form-row">
+                <label>Age Group:</label>
+                <select name="age">
+                    <option value="" disabled {% if not age %}selected{% endif %}>Select Age</option>
+                    <option value="<=30" {% if age=="<=30" %}selected{% endif %}>&le; 30 Years</option>
+                    <option value="31-40" {% if age=="31-40" %}selected{% endif %}>31 - 40 Years</option>
+                    <option value=">40" {% if age==">40" %}selected{% endif %}>&gt; 40 Years</option>
+                </select>
+            </div>
 
-Age:
-<select name="age">
-<option value="<=30"><=30</option>
-<option value="31-40">31-40</option>
-<option value=">40">>40</option>
-</select><br><br>
+            <div class="form-row">
+                <label>Income Level:</label>
+                <select name="income">
+                    <option value="" disabled {% if not income %}selected{% endif %}>Select Income</option>
+                    <option value="high" {% if income=="high" %}selected{% endif %}>High</option>
+                    <option value="medium" {% if income=="medium" %}selected{% endif %}>Medium</option>
+                    <option value="low" {% if income=="low" %}selected{% endif %}>Low</option>
+                </select>
+            </div>
 
-Income:
-<select name="income">
-<option value="high">High</option>
-<option value="medium">Medium</option>
-<option value="low">Low</option>
-</select><br><br>
+            <div class="form-row">
+                <label>Student Status:</label>
+                <select name="student">
+                    <option value="" disabled {% if not student %}selected{% endif %}>Select Status</option>
+                    <option value="yes" {% if student=="yes" %}selected{% endif %}>Student</option>
+                    <option value="no" {% if student=="no" %}selected{% endif %}>Not a Student</option>
+                </select>
+            </div>
 
-Student:
-<select name="student">
-<option value="yes">Yes</option>
-<option value="no">No</option>
-</select><br><br>
+            <div class="form-row">
+                <label>Credit Rating:</label>
+                <select name="credit">
+                    <option value="" disabled {% if not credit %}selected{% endif %}>Select Rating</option>
+                    <option value="fair" {% if credit=="fair" %}selected{% endif %}>Fair</option>
+                    <option value="excellent" {% if credit=="excellent" %}selected{% endif %}>Excellent</option>
+                </select>
+            </div>
 
-Credit Rating:
-<select name="credit">
-<option value="fair">Fair</option>
-<option value="excellent">Excellent</option>
-</select><br><br>
+            <button type="submit" class="btn-predict">Predict Purchase</button>
+        </form>
 
-<button type="submit">Predict</button>
-
-</form>
-
-{% if result %}
-<h3>Buys Computer: {{ result }}</h3>
-{% endif %}
+        {% if result %}
+        <div class="result-display">
+            Customer will buy a computer?<br>
+            <span class="{% if result == 'yes' %}buy-yes{% else %}buy-no{% endif %}">
+                {{ result|upper }}
+            </span>
+        </div>
+        {% endif %}
+    </div>
 
 </body>
+
 </html>
