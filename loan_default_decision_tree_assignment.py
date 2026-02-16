@@ -1,81 +1,119 @@
 import math
 
 data = [
-    ("C1", 2.5, 580, "Yes"),
-    ("C2", 3.0, 600, "Yes"),
-    ("C3", 3.5, 650, "No"),
-    ("C4", 4.0, 700, "No"),
-    ("C5", 4.5, 720, "No"),
-    ("C6", 5.0, 750, "No")
+    [2.5, 580, "Yes"],
+    [3.0, 600, "Yes"],
+    [3.5, 650, "No"],
+    [4.0, 700, "No"],
+    [4.5, 720, "No"],
+    [5.0, 750, "No"]
 ]
 
-print("\n===== Handling Continuous Attributes =====")
-print("Decision trees handle continuous attributes by testing threshold splits like Income ≤ value.\n")
+attributes = ["Income", "Credit Score"]
 
 
-def entropy(labels):
-    total = len(labels)
-    counts = {}
-
-    for label in labels:
-        counts[label] = counts.get(label, 0) + 1
+def entropy(rows):
+    total = len(rows)
+    yes = sum(1 for r in rows if r[-1] == "Yes")
+    no = total - yes
 
     ent = 0
-    for count in counts.values():
-        p = count / total
-        ent -= p * math.log2(p)
-
+    for count in [yes, no]:
+        if count != 0:
+            p = count / total
+            ent -= p * math.log2(p)
     return ent
 
-# Compute dataset entropy
-labels = [row[3] for row in data]
-dataset_entropy = entropy(labels)
 
-print("Dataset Entropy:", round(dataset_entropy, 4))
+def best_split(rows, index):
+    rows = sorted(rows, key=lambda x: x[index])
+    thresholds = []
 
-# -------------------------
-# Find Thresholds for Income
-# -------------------------
-incomes = sorted([row[1] for row in data])
-thresholds = [(incomes[i] + incomes[i+1]) / 2 for i in range(len(incomes)-1)]
+    for i in range(len(rows) - 1):
+        v1, v2 = rows[i][index], rows[i + 1][index]
+        thresholds.append((v1 + v2) / 2)
 
-print("\nPossible Thresholds:", thresholds)
+    best_gain = -1
+    best_threshold = None
+    base_entropy = entropy(rows)
+
+    for t in thresholds:
+        left = [r for r in rows if r[index] <= t]
+        right = [r for r in rows if r[index] > t]
+
+        if not left or not right:
+            continue
+
+        weighted = (len(left) / len(rows)) * entropy(left) + (len(right) / len(rows)) * entropy(right)
+        gain = base_entropy - weighted
+
+        if gain > best_gain:
+            best_gain = gain
+            best_threshold = t
+
+    return best_threshold, best_gain
 
 
-def info_gain(threshold):
-    left = [row for row in data if row[1] <= threshold]
-    right = [row for row in data if row[1] > threshold]
+def build_tree(rows):
+    labels = [r[-1] for r in rows]
 
-    left_labels = [row[3] for row in left]
-    right_labels = [row[3] for row in right]
+    if labels.count(labels[0]) == len(labels):
+        return labels[0]
 
-    weighted_entropy = (
-        len(left)/len(data) * entropy(left_labels) +
-        len(right)/len(data) * entropy(right_labels)
-    )
+    gains = []
+    splits = []
 
-    return dataset_entropy - weighted_entropy
+    for i in range(len(attributes)):
+        t, g = best_split(rows, i)
+        gains.append(g)
+        splits.append(t)
 
-best_threshold = None
-best_gain = -1
+    best_attr_index = gains.index(max(gains))
+    best_threshold = splits[best_attr_index]
 
-print("\n===== Information Gain for Each Threshold =====")
+    if best_threshold is None:
+        return max(set(labels), key=labels.count)
 
-for t in thresholds:
-    gain = info_gain(t)
-    print(f"Threshold {t:.2f} -> Gain {gain:.4f}")
+    left = [r for r in rows if r[best_attr_index] <= best_threshold]
+    right = [r for r in rows if r[best_attr_index] > best_threshold]
 
-    if gain > best_gain:
-        best_gain = gain
-        best_threshold = t
+    return {
+        attributes[best_attr_index]: {
+            "<=" + str(best_threshold): build_tree(left),
+            ">" + str(best_threshold): build_tree(right)
+        }
+    }
 
-print("\nBest Threshold:", best_threshold)
-print("Best Information Gain:", round(best_gain, 4))
 
-# -------------------------
-# Decision Rule
-# -------------------------
-print("\n===== Decision Tree =====")
+tree = build_tree(data)
 
-print(f"If Income ≤ {best_threshold}: Default = Yes")
-print(f"If Income > {best_threshold}: Default = No")
+print("\nDecision Tree:")
+print(tree)
+
+
+def predict(tree, sample):
+    if not isinstance(tree, dict):
+        return tree
+
+    attr = next(iter(tree))
+    index = attributes.index(attr)
+
+    for condition in tree[attr]:
+        if condition.startswith("<="):
+            threshold = float(condition[2:])
+            if sample[index] <= threshold:
+                return predict(tree[attr][condition], sample)
+        else:
+            threshold = float(condition[1:])
+            if sample[index] > threshold:
+                return predict(tree[attr][condition], sample)
+
+    return "Unknown"
+
+
+new_customer = [3.2, 620]
+
+prediction = predict(tree, new_customer)
+
+print("\nNew Customer:", new_customer)
+print("Default Prediction:", prediction)
