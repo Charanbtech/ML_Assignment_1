@@ -57,3 +57,6 @@ After processing the training data, the algorithm produces a specific hypothesis
 3.  **Result:**
     - If it matches the hypothesis patterns -> **Classified as Spam**.
     - Otherwise -> **Classified as Not Spam**.
+
+### System Output
+![Spam Classifier Output](output1.png)
