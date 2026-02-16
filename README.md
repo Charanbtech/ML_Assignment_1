@@ -13,9 +13,9 @@ The assignment combines theoretical understanding, manual algorithm implementati
 ```
 ML-Assignment-1/
 │
-├── concept_learning_spam.py             # Question 1: Spam Email Classification
-├── loan_default_decision_tree_assignment.py # Question 2: Loan Default Prediction
-├── id3_buy_computer_assignment.py       # Question 3: Buy Computer Prediction
+├── 01_concept_learning_spam.py          # Question 1: Spam Email Classification
+├── 02_loan_default_prediction.py        # Question 2: Loan Default Prediction
+├── 03_id3_buy_computer.py               # Question 3: Buy Computer Prediction
 ├── README.md                            # Project Documentation
 └── Wiki/                                # Detailed documentation
 ```
@@ -100,11 +100,11 @@ To run the assignments, execute the Python scripts via terminal:
 
 ```bash
 # Question 1: Run Concept Learning Spam Classifier
-python concept_learning_spam.py
+python 01_concept_learning_spam.py
 
 # Question 2: Run Loan Default Decision Tree
-python loan_default_decision_tree_assignment.py
+python 02_loan_default_prediction.py
 
 # Question 3: Run ID3 Algorithm
-python id3_buy_computer_assignment.py
+python 03_id3_buy_computer.py
 ```
